@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">YaKalendar</string>
+    <string name="task_placeholder_1">Задача 1: Купить хлеб</string>
+    <string name="task_placeholder_2">Задача 2: Позвонить маме</string>
+    <string name="task_placeholder_3">Задача 3: Сделать зарядку</string>
+</resources>
