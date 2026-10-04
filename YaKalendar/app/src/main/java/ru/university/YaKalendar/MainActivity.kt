@@ -2,10 +2,13 @@ package ru.university.YaKalendar
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
 
@@ -25,12 +28,18 @@ class MainActivity : AppCompatActivity() {
         recyclerView = findViewById(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
 
-        adapter = TaskAdapter(taskList) { task ->
-            val intent = Intent(this, TaskDetailActivity::class.java)
-            intent.putExtra("task_id", task.id)
-            startActivity(intent)
+        val db = AppDatabase.getInstance(this)
+        val dao = db.taskDao()
+
+        lifecycleScope.launch {
+            val tasks = dao.getAllTasks()
+            adapter = TaskAdapter(tasks) { task ->
+                val intent = Intent(this@MainActivity, TaskDetailActivity::class.java)
+                intent.putExtra("task_id", task.id)
+                startActivity(intent)
+            }
+            recyclerView.adapter = adapter
         }
-        recyclerView.adapter = adapter
 
         val fab = findViewById<FloatingActionButton>(R.id.fabAdd)
         fab.setOnClickListener {
