@@ -1,6 +1,7 @@
 package ru.university.YaKalendar
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface TaskDao {
@@ -14,7 +15,7 @@ interface TaskDao {
     suspend fun delete(task: Task)
 
     @Query("SELECT * FROM tasks")
-    suspend fun getAllTasks(): List<Task>
+    fun getAllTasks(): Flow<List<Task>>
 
     @Query("SELECT * FROM tasks WHERE date = :date")
     suspend fun getTasksByDate(date: String): List<Task>

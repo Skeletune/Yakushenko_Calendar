@@ -4,12 +4,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
 class TaskAdapter(
-    private val tasks: List<Task>,
     private val onItemClick: (Task) -> Unit
-) : RecyclerView.Adapter<TaskAdapter.TaskViewHolder>() {
+) : ListAdapter<Task, TaskAdapter.TaskViewHolder>(TaskDiffCallback()) {
 
     class TaskViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val tvTitle: TextView = view.findViewById(R.id.tvTitle)
@@ -24,15 +25,23 @@ class TaskAdapter(
     }
 
     override fun onBindViewHolder(holder: TaskViewHolder, position: Int) {
-        val task = tasks[position]
+        val task = getItem(position)
         holder.tvTitle.text = task.title
         holder.tvDate.text = task.date
-        holder.tvStatus.text = "Не выполнена" // заглушка
+        holder.tvStatus.text = if (task.isDone) "Выполнена" else "Не выполнена"
 
         holder.itemView.setOnClickListener {
             onItemClick(task)
         }
     }
 
-    override fun getItemCount(): Int = tasks.size
+    private class TaskDiffCallback : DiffUtil.ItemCallback<Task>() {
+        override fun areItemsTheSame(oldItem: Task, newItem: Task): Boolean {
+            return oldItem.id == newItem.id
+        }
+
+        override fun areContentsTheSame(oldItem: Task, newItem: Task): Boolean {
+            return oldItem == newItem
+        }
+    }
 }
